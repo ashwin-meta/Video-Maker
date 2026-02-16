@@ -53,9 +53,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
 
 //    implementation 'com.arthenica:ffmpeg-kit-full:4.5.1-1'
-    // Using 5.1 LTS - last stable version before FFmpeg Kit retirement
-    // Version 6.0-2 is no longer available on Maven Central
-    implementation 'com.arthenica:ffmpeg-kit-min-gpl:5.1'
+//    implementation 'com.arthenica:ffmpeg-kit-min-gpl:5.1' // Removed - using native Android MediaCodec/MediaMuxer
 //    implementation 'com.arthenica:mobile-ffmpeg-min:4.4'
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'

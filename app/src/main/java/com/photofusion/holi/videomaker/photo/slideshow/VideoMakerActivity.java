@@ -1,6 +1,8 @@
 package com.photofusion.holi.videomaker.photo.slideshow;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -10,10 +12,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.arthenica.ffmpegkit.FFmpegKit;
-import com.arthenica.ffmpegkit.FFmpegKitConfig;
-import com.arthenica.ffmpegkit.FFmpegSession;
-import com.arthenica.ffmpegkit.ReturnCode;
 import com.ironsource.mediationsdk.IronSource;
 import com.photofusion.holi.videomaker.photo.slideshow.util.AdAdmob;
 import com.photofusion.holi.videomaker.photo.slideshow.util.BaseActivity;
@@ -82,7 +80,7 @@ public class VideoMakerActivity extends BaseActivity {
 
     public class ProcessVideo extends AsyncTask<Integer, Integer, List<String>> {
         File imgDir;
-        String cmd;
+        VideoEncoderHelper videoEncoder;
 
         @Override
         protected void onPreExecute() {
@@ -120,66 +118,79 @@ public class VideoMakerActivity extends BaseActivity {
                     + String.valueOf(VideoThemeActivity.total)
                     .replace(" Seconds", "")) * 1000;
 
-            if (VideoThemeActivity.mDuration < VideoThemeActivity.duration1) {
-
-                if (Utils.framePostion > -1) {
-                    Log.v("withframe", "withframe");
-
-                    cmd = "-y&-r&22.0/" + VideoThemeActivity.application.getSecond() + "&-i&" + imgDir.getAbsolutePath() + "/img%5d.jpg" + "&-i&"
-                            + FileUtils.frameFile.getAbsolutePath() + "&-ss&" + 0
-                            + "&-i&" + VideoThemeActivity.application.getMusicData().track_data + "&-filter_complex&[1]scale="
-                            + finalwidth +
-                            ":-1[b];[0:v][b]overlay&-vcodec&libx264&-acodec&aac&-r&30&-t&" +
-                            VideoThemeActivity.total + "&-strict&experimental&-preset&ultrafast&" +
-                            VideoThemeActivity.outputPath + "";
-
-                } else {
-                    //without frame
-                    Log.v("withoutframe", "withoutframe");
-                    cmd = "-y&-r&" + 22.0 / VideoThemeActivity.application.getSecond() + "&-i&" + imgDir.getAbsolutePath()
-                            + "/img%5d.jpg&-ss&" +
-                            0 + "&-i&" + VideoThemeActivity.application.getMusicData().track_data +
-                            "&-map&0:0&-map&1:0&-vcodec&libx264&-acodec&aac&-r&30&-t&" + VideoThemeActivity.total +
-                            "&-strict&experimental&-preset&ultrafast&" + VideoThemeActivity.outputPath + "";
-                }
-                String[] command = cmd.split("&");
-
-                if (command.length != 0) {
-                    execFFmpegBinary(command);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Command Empty", Toast.LENGTH_LONG).show();
+            // Prepare video encoding parameters
+            String audioPath = VideoThemeActivity.application.getMusicData() != null ? 
+                              VideoThemeActivity.application.getMusicData().track_data : null;
+            Bitmap frameOverlay = null;
+            
+            // Load frame overlay if selected
+            if (Utils.framePostion > -1 && FileUtils.frameFile.exists()) {
+                try {
+                    frameOverlay = BitmapFactory.decodeFile(FileUtils.frameFile.getAbsolutePath());
+                    Log.v("withframe", "Frame overlay loaded");
+                } catch (Exception e) {
+                    Log.e("VideoMaker", "Error loading frame", e);
                 }
             } else {
-
-                if (Utils.framePostion > -1) {
-                    Log.v("withframe", "withframe");
-
-                    cmd = "-y&-r&22.0/" + VideoThemeActivity.application.getSecond() + "&-i&" + imgDir.getAbsolutePath() +
-                            "/img%5d.jpg" + "&-i&"
-                            + FileUtils.frameFile.getAbsolutePath() + "&-ss&" + 0
-                            + "&-i&" + VideoThemeActivity.application.getMusicData().track_data + "&-filter_complex&[1]scale=" +
-                            finalwidth +
-                            ":-1[b];[0:v][b]overlay&-vcodec&libx264&-acodec&aac&-r&30&-t&" +
-                            VideoThemeActivity.total + "&-strict&experimental&-preset&ultrafast&" + VideoThemeActivity.outputPath + "";
-
-                } else {
-                    //without frame
-                    Log.v("withoutframe", "withoutframe");
-                    cmd = "-y&-r&" + 22.0 / VideoThemeActivity.application.getSecond() + "&-i&" + imgDir.getAbsolutePath() +
-                            "/img%5d.jpg&-ss&" +
-                            0 + "&-i&" + VideoThemeActivity.application.getMusicData().track_data +
-                            "&-map&0:0&-map&1:0&-vcodec&libx264&-acodec&aac&-r&30&-t&" + VideoThemeActivity.total +
-                            "&-strict&experimental&-preset&ultrafast&" + VideoThemeActivity.outputPath + "";
-                }
-                String[] command = cmd.split("&");
-
-                if (command.length != 0) {
-                    execFFmpegBinary(command);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Command Empty", Toast.LENGTH_LONG).show();
-                }
-
+                Log.v("withoutframe", "No frame overlay");
             }
+
+            // Calculate duration per image in milliseconds
+            float durationPerImageMs = VideoThemeActivity.application.getSecond() * 1000.0f;
+            float totalDurationSec = VideoThemeActivity.total;
+            int imageCount = KSUtil.videoPathList.size();
+
+            // Create video encoder
+            videoEncoder = new VideoEncoderHelper();
+            
+            // Start encoding
+            videoEncoder.createVideoFromImages(
+                imgDir,
+                VideoThemeActivity.outputPath,
+                audioPath,
+                frameOverlay,
+                KessiApplication.VIDEO_WIDTH,
+                KessiApplication.VIDEO_HEIGHT,
+                durationPerImageMs,
+                totalDurationSec,
+                imageCount,
+                new VideoEncoderHelper.ProgressCallback() {
+                    @Override
+                    public void onProgress(int progress) {
+                        runOnUiThread(() -> {
+                            perTV.setText(progress + " %");
+                        });
+                    }
+
+                    @Override
+                    public void onComplete(boolean success) {
+                        runOnUiThread(() -> {
+                            if (success) {
+                                perTV.setText("100 %");
+                                // Clean up temporary files
+                                removeFrameImage(VideoThemeActivity.folderPath);
+                                removeFrameImage(VideoThemeActivity.folderPath + "/temp");
+                                removeFrameImage(VideoThemeActivity.folderPath + "/edittmpzoom");
+                                FileUtils.deleteFile(VideoThemeActivity.tempFile);
+                                removemusic(VideoThemeActivity.folderPath + "/music/");
+                                
+                                // Scan media file
+                                File f = new File(VideoThemeActivity.outputPath);
+                                MediaScannerConnection.scanFile(getApplicationContext(),
+                                        new String[]{f.getAbsolutePath()},
+                                        new String[]{"mp4"}, null);
+
+                                // Navigate to video player
+                                VideoThemeActivity.handler.postDelayed(runnable, 1000);
+                            } else {
+                                Toast.makeText(VideoMakerActivity.this, 
+                                             "Error creating video", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                }
+            );
+
             return null;
 
         }
@@ -196,60 +207,6 @@ public class VideoMakerActivity extends BaseActivity {
 
         }
     }
-
-
-    void execFFmpegBinary(final String[] command) {
-
-
-//        FFmpegSession resSession = FFmpegKit.executeAsync(command, session -> {
-//        }, log -> {
-//        }, statistics -> {
-//
-//            // CALLED WHEN SESSION GENERATES STATISTICS
-//            float progress = Float.parseFloat(String.valueOf(statistics.getTime())) * 100 / (int) (((float) (KSUtil.videoPathList.size() - 1)) * VideoThemeActivity.seconds);
-//            runOnUiThread(() -> {
-//                perTV.setText("" + (int) progress / 1000 + " %");
-//                if (perTV.getText().toString().equals("100 %")) {
-//                    removeFrameImage(VideoThemeActivity.folderPath);
-//                    removeFrameImage(VideoThemeActivity.folderPath + "/temp");
-//                    removeFrameImage(VideoThemeActivity.folderPath + "/edittmpzoom");
-//                    FileUtils.deleteFile(VideoThemeActivity.tempFile);
-//                    removemusic(VideoThemeActivity.folderPath + "/music/");
-//                    File f = new File(VideoThemeActivity.outputPath);
-//                    MediaScannerConnection.scanFile(getApplicationContext(),
-//                            new String[]{f.getAbsolutePath()},
-//                            new String[]{"mp4"}, null);
-//
-//                    VideoThemeActivity.handler.postDelayed(runnable, 1000);
-//                }
-//            });
-//        });
-
-        FFmpegKitConfig.enableStatisticsCallback(statistics -> {
-            float progress = Float.parseFloat(String.valueOf(statistics.getTime())) * 100 / (int) (((float) (KSUtil.videoPathList.size() - 1)) * VideoThemeActivity.seconds);
-            runOnUiThread(() -> {
-                perTV.setText("" + (int) progress / 1000 + " %");
-            });
-        });
-
-        FFmpegSession session = FFmpegKit.execute(command);
-
-        if (ReturnCode.isSuccess(session.getReturnCode())) {
-            // SUCCESS
-            removeFrameImage(VideoThemeActivity.folderPath);
-            removeFrameImage(VideoThemeActivity.folderPath + "/temp");
-            removeFrameImage(VideoThemeActivity.folderPath + "/edittmpzoom");
-            FileUtils.deleteFile(VideoThemeActivity.tempFile);
-            removemusic(VideoThemeActivity.folderPath + "/music/");
-            File f = new File(VideoThemeActivity.outputPath);
-            MediaScannerConnection.scanFile(getApplicationContext(),
-                    new String[]{f.getAbsolutePath()},
-                    new String[]{"mp4"}, null);
-
-            VideoThemeActivity.handler.postDelayed(runnable, 1000);
-        }
-    }
-
 
     Runnable runnable = new Runnable() {
 
