@@ -55,9 +55,9 @@ dependencies {
 //    implementation 'com.arthenica:ffmpeg-kit-full:4.5.1-1'
 //    implementation 'com.arthenica:ffmpeg-kit-min-gpl:5.1' // Removed - using native Android MediaCodec/MediaMuxer
 //    implementation 'com.arthenica:mobile-ffmpeg-min:4.4'
-    implementation 'com.github.bumptech.glide:glide:5.0.5'
-    annotationProcessor 'com.github.bumptech.glide:compiler:5.0.5'
-    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+    implementation 'com.google.android.material:material:1.12.0'
 
 
 

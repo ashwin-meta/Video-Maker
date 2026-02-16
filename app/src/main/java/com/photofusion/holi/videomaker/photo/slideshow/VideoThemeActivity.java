@@ -45,9 +45,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.bumptech.glide.signature.MediaStoreSignature;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
 import com.facebook.ads.RewardedVideoAd;
@@ -973,13 +976,19 @@ public class VideoThemeActivity extends BaseActivity implements OnClickListener,
                     seekProgress %= application.videoImages.size();
 
 
-                    glide.load((String) application.videoImages.get(seekProgress))
-                            .asBitmap()
+                    glide.asBitmap()
+                            .load((String) application.videoImages.get(seekProgress))
                             .signature(new MediaStoreSignature("image/*", System.currentTimeMillis(), 0))
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE).into(new SimpleTarget<Bitmap>() {
+                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                            .into(new CustomTarget<Bitmap>() {
                         @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             ivPreview.setImageBitmap(resource);
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            // Required method for CustomTarget
                         }
                     });
                     seekProgress++;
