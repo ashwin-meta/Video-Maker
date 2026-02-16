@@ -3,26 +3,14 @@
 buildscript {
     
     repositories {
-        google()
+        maven { url "https://maven.google.com" }
         mavenCentral()
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.9.0'
 //        classpath 'com.google.gms:google-services:4.3.15'
 
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        maven { url 'https://www.jitpack.io' }
-        mavenCentral()
-        maven {url 'https://android-sdk.is.com/'}
-        maven {
-            url 'https://cboost.jfrog.io/artifactory/chartboost-ads/'
-        }
     }
 }
 

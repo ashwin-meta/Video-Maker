@@ -19,7 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
-import com.ironsource.mediationsdk.IronSource;
 import com.photofusion.holi.videomaker.photo.slideshow.MainActivity;
 import com.photofusion.holi.videomaker.photo.slideshow.KessiApplication;
 import com.photofusion.holi.videomaker.photo.slideshow.SplashActivity;
@@ -102,14 +101,11 @@ public class SwapperActivity extends BaseActivity implements View.OnClickListene
 
             findViewById(R.id.banner_container).setVisibility(View.GONE);
         }
-        IronSource.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // call the IronSource onPause method
-        IronSource.onPause(this);
     }
 
 

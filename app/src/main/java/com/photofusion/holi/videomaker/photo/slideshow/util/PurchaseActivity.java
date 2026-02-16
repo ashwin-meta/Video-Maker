@@ -15,15 +15,16 @@ import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchasesParams;
 
-import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.collect.ImmutableList;
 import com.photofusion.holi.videomaker.photo.slideshow.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PurchaseActivity extends BaseActivity {
@@ -50,8 +51,12 @@ public class PurchaseActivity extends BaseActivity {
         prefs = new Prefs(this);
         productDetailsList = new ArrayList<>();
 
+        PendingPurchasesParams pendingPurchasesParams = PendingPurchasesParams.newBuilder()
+                .enableOneTimeProducts()
+                .build();
+
         billingClient = BillingClient.newBuilder(this)
-                .enablePendingPurchases()
+                .enablePendingPurchases(pendingPurchasesParams)
                 .setListener(
                         (billingResult, list) -> {
                             if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && list != null) {
@@ -106,15 +111,15 @@ public class PurchaseActivity extends BaseActivity {
 
     void showProductsInApp() {
 
-        ImmutableList<QueryProductDetailsParams.Product> productList = ImmutableList.of(
-                QueryProductDetailsParams.Product.newBuilder()
-                        .setProductId(LIFETIME_KEY)
-                        .setProductType(BillingClient.ProductType.INAPP)
-                        .build()
-        );
+        List<QueryProductDetailsParams.Product> productList = new ArrayList<>();
+        productList.add(QueryProductDetailsParams.Product.newBuilder()
+                .setProductId(LIFETIME_KEY)
+                .setProductType(BillingClient.ProductType.INAPP)
+                .build());
 
-        QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder().
-                setProductList(productList).build();
+        QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder()
+                .setProductList(productList)
+                .build();
 
         billingClient.queryProductDetailsAsync(
                 params,
@@ -122,26 +127,30 @@ public class PurchaseActivity extends BaseActivity {
                     Log.e("showProducts: ", productDetailsList.toString());
                     Log.e("showProducts: ", "" + productDetailsList.size());
 
-                    rateLifetime = productDetailsList.get(0).getOneTimePurchaseOfferDetails().getFormattedPrice();
-                    Log.e("showProductsInApp: ", rateLifetime);
-                    runOnUiThread(() -> {
+                    // Safety check: ensure productDetailsList is not empty
+                    if (productDetailsList != null && !productDetailsList.isEmpty()) {
+                        rateLifetime = productDetailsList.get(0).getOneTimePurchaseOfferDetails().getFormattedPrice();
                         Log.e("showProductsInApp: ", rateLifetime);
-                        lifetimeTv.setText(rateLifetime);
-                        ll_lifetime.setOnClickListener(v -> launchPurchaseFlowInApp(productDetailsList.get(0)));
-
-                    });
+                        runOnUiThread(() -> {
+                            Log.e("showProductsInApp: ", rateLifetime);
+                            lifetimeTv.setText(rateLifetime);
+                            ll_lifetime.setOnClickListener(v -> launchPurchaseFlowInApp(productDetailsList.get(0)));
+                        });
+                    } else {
+                        Log.e("showProductsInApp: ", "Product details list is empty");
+                        runOnUiThread(() -> Toast.makeText(PurchaseActivity.this, "Unable to load products", Toast.LENGTH_SHORT).show());
+                    }
                 }
         );
     }
 
 
     void launchPurchaseFlowInApp(ProductDetails productDetails) {
-        ImmutableList<BillingFlowParams.ProductDetailsParams> productDetailsParamsList =
-                ImmutableList.of(
-                        BillingFlowParams.ProductDetailsParams.newBuilder()
-                                .setProductDetails(productDetails)
-                                .build()
-                );
+        List<BillingFlowParams.ProductDetailsParams> productDetailsParamsList = new ArrayList<>();
+        productDetailsParamsList.add(BillingFlowParams.ProductDetailsParams.newBuilder()
+                .setProductDetails(productDetails)
+                .build());
+
         BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
                 .setProductDetailsParamsList(productDetailsParamsList)
                 .build();
@@ -175,7 +184,7 @@ public class PurchaseActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         billingClient.queryPurchasesAsync(
-                QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build(),
+                QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build(),
                 (billingResult, list) -> {
                     if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                         for (Purchase purchase : list) {
@@ -200,9 +209,15 @@ public class PurchaseActivity extends BaseActivity {
 
     void restorePurchases() {
 
-        billingClient = BillingClient.newBuilder(this).enablePendingPurchases().
-                setListener((billingResult, list) -> {
+        PendingPurchasesParams pendingPurchasesParams = PendingPurchasesParams.newBuilder()
+                .enableOneTimeProducts()
+                .build();
+
+        billingClient = BillingClient.newBuilder(this)
+                .enablePendingPurchases(pendingPurchasesParams)
+                .setListener((billingResult, list) -> {
                 }).build();
+
         final BillingClient finalBillingClient = billingClient;
         billingClient.startConnection(new BillingClientStateListener() {
             @Override
@@ -217,27 +232,29 @@ public class PurchaseActivity extends BaseActivity {
                     Log.e("onConnected: ", billingResult.toString());
                     finalBillingClient.queryPurchasesAsync(
                             QueryPurchasesParams.newBuilder().setProductType
-                                    (BillingClient.ProductType.SUBS).build(),
+                                    (BillingClient.ProductType.INAPP).build(),
                             (billingResult1, list) -> {
                                 Log.e("onConnected: ", billingResult1.toString());
                                 if (billingResult1.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-//                                    if(list.size()>0)
-//                                    {
-                                    Log.e("onConnected: ", billingResult1.toString());
-                                    runOnUiThread(() -> {
-                                        prefs.setPremium(1); // set 1 to activate premium feature
-//                                        prefs.setIsGoBack(true);
-                                        Toast.makeText(PurchaseActivity.this, "Successfully restored.", Toast.LENGTH_SHORT).show();
-                                        onBackPressed();
-                                    });
-
+                                    // Check if any purchases exist
+                                    if (list != null && !list.isEmpty()) {
+                                        Log.e("onConnected: ", "Purchases found: " + list.size());
+                                        runOnUiThread(() -> {
+                                            prefs.setPremium(1); // set 1 to activate premium feature
+                                            Toast.makeText(PurchaseActivity.this, "Successfully restored.", Toast.LENGTH_SHORT).show();
+                                            onBackPressed();
+                                        });
+                                    } else {
+                                        runOnUiThread(() -> {
+                                            Toast.makeText(PurchaseActivity.this, "Oops, No purchase found.", Toast.LENGTH_SHORT).show();
+                                            prefs.setPremium(0); // set 0 to de-activate premium feature
+                                        });
+                                    }
                                 } else {
                                     runOnUiThread(() -> {
                                         Toast.makeText(PurchaseActivity.this, "Oops, No purchase found.", Toast.LENGTH_SHORT).show();
                                         prefs.setPremium(0); // set 0 to de-activate premium feature
                                     });
-
-//                                    }
                                 }
                             });
                 }
