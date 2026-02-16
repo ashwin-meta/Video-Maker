@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ironsource.mediationsdk.IronSource;
 import com.photofusion.holi.videomaker.photo.slideshow.util.AdAdmob;
 import com.photofusion.holi.videomaker.photo.slideshow.util.BaseActivity;
 import com.photofusion.holi.videomaker.photo.slideshow.util.KSUtil;
@@ -54,14 +53,11 @@ public class VideoMakerActivity extends BaseActivity {
 
             findViewById(R.id.banner_container).setVisibility(View.GONE);
         }
-        IronSource.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // call the IronSource onPause method
-        IronSource.onPause(this);
     }
 
 

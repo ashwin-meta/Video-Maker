@@ -11,8 +11,6 @@ dependencyResolutionManagement {
         maven { url "https://maven.google.com" }
         mavenCentral()
         maven { url 'https://www.jitpack.io' }
-        maven { url 'https://android-sdk.is.com/' }
-        maven { url 'https://cboost.jfrog.io/artifactory/chartboost-ads/' }
     }
 }
 include ':app', ':imageeditlibrary'

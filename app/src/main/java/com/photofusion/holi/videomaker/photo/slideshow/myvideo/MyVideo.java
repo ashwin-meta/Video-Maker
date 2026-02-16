@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ironsource.mediationsdk.IronSource;
 import com.photofusion.holi.videomaker.photo.slideshow.R;
 import com.photofusion.holi.videomaker.photo.slideshow.util.AdAdmob;
 import com.photofusion.holi.videomaker.photo.slideshow.util.BaseActivity;
@@ -80,14 +79,11 @@ public class MyVideo extends BaseActivity {
 
             findViewById(R.id.banner_container).setVisibility(View.GONE);
         }
-        IronSource.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // call the IronSource onPause method
-        IronSource.onPause(this);
     }
 
 

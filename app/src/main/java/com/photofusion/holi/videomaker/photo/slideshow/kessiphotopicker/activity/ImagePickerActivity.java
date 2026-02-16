@@ -31,7 +31,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.ironsource.mediationsdk.IronSource;
 import com.photofusion.holi.videomaker.photo.slideshow.kessiphotopicker.adapter.AlbumAdapter;
 import com.photofusion.holi.videomaker.photo.slideshow.R;
 import com.photofusion.holi.videomaker.photo.slideshow.kessiphotopicker.Constants;
@@ -276,14 +275,11 @@ public class ImagePickerActivity extends BaseActivity implements OnClickListener
 
             findViewById(R.id.banner_container).setVisibility(View.GONE);
         }
-        IronSource.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // call the IronSource onPause method
-        IronSource.onPause(this);
     }
 
 
