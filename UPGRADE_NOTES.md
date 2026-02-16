@@ -83,7 +83,7 @@ This project has been successfully upgraded to target Android SDK 36 (API level 
 - **Lottie**: `4.1.0` → `6.6.2`
 - **Retrofit**: `2.9.0` → `2.11.0`
 - **Billing**: `6.0.0` → `7.2.0`
-- **FFmpeg Kit**: `4.5` → `6.0-2`
+- **FFmpeg Kit**: `4.5` → `5.1` (LTS version - 6.0-2 unavailable due to FFmpeg Kit retirement)
 - **OneSignal**: `[4.0.0, 4.99.99]` → `[5.0.0, 5.99.99]`
 - **SDP Android**: `1.0.6` → `1.1.1`
 - **Volley**: `1.2.1` (unchanged)
@@ -199,6 +199,17 @@ The build process requires access to `dl.google.com` which is Google's Maven rep
    - SDK upgrade may require initialization changes
    - Check IronSource migration documentation
 
+5. **FFmpeg Kit 6.0-2 → 5.1 LTS**:
+   - Version 6.0-2 is no longer available on Maven Central
+   - FFmpeg Kit project has been retired (no new releases)
+   - Using version 5.1 LTS - last stable version before retirement
+   - All FFmpeg Kit binaries were removed from Maven Central in early 2025
+   - **Future Consideration**: May need to migrate to a community fork or alternative:
+     - Community fork: `ffmpeg-kit-community` (salahawad/ffmpeg-kit-community)
+     - Alternative: Custom FFmpeg build via JNI
+     - Alternative: ijkplayer (for video playback)
+   - No code changes required for 5.1 LTS version
+
 ### Deprecated Configurations Removed
 
 - ✅ Removed `jcenter()` repository (shut down)
@@ -270,6 +281,7 @@ For issues related to:
 | AppCompat | 1.4.2 | 1.7.0 |
 | Material | 1.6.1 | 1.12.0 |
 | Glide | 3.7.0 | 4.16.0 |
+| FFmpeg Kit | 4.5 | 5.1 LTS |
 | Firebase BOM | 32.1.0 | 34.9.0 |
 | Play Services Ads | 21.0.0 | 23.6.0 |
 | IronSource | 7.3.0.1 | 8.5.0 |
