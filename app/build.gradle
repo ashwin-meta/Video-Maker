@@ -1,0 +1,123 @@
+plugins {
+    id 'com.android.application'
+
+//    id 'com.google.gms.google-services'
+}
+
+android {
+    compileSdkVersion 33
+
+    defaultConfig {
+        applicationId "com.photofusion.holi.videomaker.photo.slideshow"
+
+        minSdkVersion 24
+        targetSdkVersion 33
+        versionCode 1
+        versionName "1.0.0"
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters "arm64-v8a", "armeabi-v7a"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+
+    dataBinding {
+        enabled = true
+    }
+
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation project(':imageeditlibrary')
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.cardview:cardview:1.0.0'
+
+//    implementation 'com.arthenica:ffmpeg-kit-full:4.5.1-1'
+    implementation 'com.arthenica:ffmpeg-kit-min-gpl:4.5'
+//    implementation 'com.arthenica:mobile-ffmpeg-min:4.4'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'com.google.android.material:material:1.6.1'
+
+
+
+    testImplementation 'junit:junit:4.13.2'
+    implementation 'com.airbnb.android:lottie:4.1.0'
+
+    implementation 'com.google.android.gms:play-services-ads:21.0.0'
+    implementation files('libs/commons-io-2.4.jar')
+    implementation files('libs/nineoldandroids-2.4.0.jar')
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    implementation 'com.onesignal:OneSignal:[4.0.0, 4.99.99]'
+    implementation "androidx.multidex:multidex:2.0.1"
+
+    /*ironsource*/
+    implementation 'com.ironsource.sdk:mediationsdk:7.3.0.1'
+
+    // Add Facebook Network
+    implementation 'com.ironsource.adapters:facebookadapter:4.3.40'
+
+    implementation 'com.google.android.gms:play-services-appset:16.0.0'
+    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
+    implementation 'com.google.android.gms:play-services-basement:18.1.0'
+
+    // Open Ad
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-runtime:2.5.1"
+    implementation 'androidx.lifecycle:lifecycle-process:2.5.1'
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.5.1"
+
+    // Billing
+    implementation 'com.android.billingclient:billing:6.0.0'
+    implementation 'com.google.android.gms:play-services-vision:20.1.3'
+    implementation 'com.google.android.gms:play-services-ads:22.1.0'
+    implementation 'com.google.firebase:firebase-crashlytics-buildtools:2.9.5'
+
+    implementation platform('com.google.firebase:firebase-bom:32.1.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-database:20.2.2'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    //arr
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation "com.github.skydoves:androidribbon:1.0.4"
+    implementation 'com.makeramen:roundedimageview:2.3.0'
+    implementation 'com.android.volley:volley:1.2.1'
+
+    implementation 'com.google.android.gms:play-services-ads:22.2.0'
+
+    //Charboost
+    implementation 'com.google.ads.mediation:chartboost:9.3.1.0'
+
+    //FaceBook
+    implementation 'com.google.ads.mediation:facebook:6.14.0.0'
+
+    // Add AdColony Network
+    implementation 'com.ironsource.adapters:adcolonyadapter:4.3.14'
+    implementation 'com.adcolony:sdk:4.8.0'
+
+    // Add Facebook Network
+    implementation 'com.ironsource.adapters:facebookadapter:4.3.43'
+    implementation 'com.facebook.android:audience-network-sdk:6.14.0'
+
+}

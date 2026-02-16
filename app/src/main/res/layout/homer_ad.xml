@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/_15sdp"
+    android:forceDarkAllowed="false"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#fff">
+
+  <ImageView
+      android:id="@+id/ad_img"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_above="@+id/btmLay"
+      android:layout_marginBottom="@dimen/_10sdp"/>
+
+
+
+
+    <LinearLayout
+        android:id="@+id/btmLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/cancel"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:layout_marginRight="12dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:text="Later"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/okay"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:text="Download"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+</RelativeLayout>

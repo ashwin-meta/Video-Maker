@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "722985856358",
+    "firebase_url": "https://slideshowwithmusic-46a27-default-rtdb.firebaseio.com",
+    "project_id": "slideshowwithmusic-46a27",
+    "storage_bucket": "slideshowwithmusic-46a27.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:722985856358:android:a1a54f32cd3928a9eb2ca7",
+        "android_client_info": {
+          "package_name": "com.slide.photo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "722985856358-n3i559e4c8f36eidpm546h7vfbbq180h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiVmjcQ7jvveuTiG3Tm9DmUbGD3QNOQFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "722985856358-n3i559e4c8f36eidpm546h7vfbbq180h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

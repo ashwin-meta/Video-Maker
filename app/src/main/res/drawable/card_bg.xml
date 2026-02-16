@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background Shape with Rounded Corners -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/_10sdp" /> <!-- Adjust the radius as needed -->
+            <solid android:color="#FFFFFF" /> <!-- Solid color as fallback -->
+        </shape>
+    </item>
+    <!-- Gradient Layer -->
+    <item >
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/_10sdp" /> <!-- Adjust the radius to match the background shape -->
+            <gradient
+                android:startColor="@color/colorPrimary"
+                android:endColor="@color/sec_color"
+                android:angle="90" /> <!-- Adjust angle as needed -->
+        </shape>
+    </item>
+</layer-list>
